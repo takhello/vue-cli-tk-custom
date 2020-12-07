@@ -52,6 +52,7 @@ module.exports = class Creator extends EventEmitter {
 
     this.name = name
     this.context = process.env.VUE_CLI_CONTEXT = context
+    // ↑↑↑↑↑
     const { presetPrompt, featurePrompt } = this.resolveIntroPrompts()
 
     this.presetPrompt = presetPrompt
@@ -88,6 +89,7 @@ module.exports = class Creator extends EventEmitter {
           exit(1)
         }
       } else {
+        // ↑↑↑↑ 获取用户最终选择的内容
         preset = await this.promptAndResolvePreset()
       }
     }
@@ -306,6 +308,8 @@ module.exports = class Creator extends EventEmitter {
     // prompt
     if (!answers) {
       await clearConsole(true)
+
+      //↑↑↑↑
       answers = await inquirer.prompt(this.resolveFinalPrompts())
     }
     debug('vue-cli:answers')(answers)
@@ -343,6 +347,7 @@ module.exports = class Creator extends EventEmitter {
     return preset
   }
 
+  // 根据选择的结果处理
   async resolvePreset (name, clone) {
     let preset
     const savedPresets = this.getPresets()
@@ -355,6 +360,7 @@ module.exports = class Creator extends EventEmitter {
       log(`Fetching remote preset ${chalk.cyan(name)}...`)
       this.emit('creation', { event: 'fetch-remote-preset' })
       try {
+        // ↑↑↑↑↑ clone远程
         preset = await loadRemotePreset(name, clone)
       } catch (e) {
         error(`Failed fetching remote preset ${chalk.cyan(name)}:`)
@@ -415,6 +421,7 @@ module.exports = class Creator extends EventEmitter {
     return Object.assign({}, savedOptions.presets, defaults.presets)
   }
 
+  // ↑↑↑↑↑
   resolveIntroPrompts () {
     const presets = this.getPresets()
     const presetChoices = Object.entries(presets).map(([name, preset]) => {
@@ -537,6 +544,7 @@ module.exports = class Creator extends EventEmitter {
     })
 
     const prompts = [
+      // ↑↑↑↑↑
       this.presetPrompt,
       this.featurePrompt,
       ...this.injectedPrompts,
