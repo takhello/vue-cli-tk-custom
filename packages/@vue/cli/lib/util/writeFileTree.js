@@ -11,7 +11,7 @@ function deleteRemovedFiles (directory, newFiles, previousFiles) {
     return fs.unlink(path.join(directory, filename))
   }))
 }
-
+// 读取文件
 module.exports = async function writeFileTree (dir, files, previousFiles) {
   if (process.env.VUE_CLI_SKIP_WRITE) {
     return

@@ -309,7 +309,7 @@ module.exports = class Creator extends EventEmitter {
     if (!answers) {
       await clearConsole(true)
 
-      //↑↑↑↑
+      // ↑↑↑↑
       answers = await inquirer.prompt(this.resolveFinalPrompts())
     }
     debug('vue-cli:answers')(answers)

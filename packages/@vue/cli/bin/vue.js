@@ -7,36 +7,36 @@ const { chalk, semver } = require('@vue/cli-shared-utils')
 const requiredVersion = require('../package.json').engines.node
 const leven = require('leven')
 
-function checkNodeVersion(wanted, id) {
-    if (!semver.satisfies(process.version, wanted, { includePrerelease: true })) {
-        console.log(
-            chalk.red(
-                'You are using Node ' +
+function checkNodeVersion (wanted, id) {
+  if (!semver.satisfies(process.version, wanted, { includePrerelease: true })) {
+    console.log(
+      chalk.red(
+        'You are using Node ' +
                     process.version +
                     ', but this version of ' +
                     id +
                     ' requires Node ' +
                     wanted +
                     '.\nPlease upgrade your Node version.'
-            )
-        )
-        process.exit(1)
-    }
+      )
+    )
+    process.exit(1)
+  }
 }
 
 checkNodeVersion(requiredVersion, '@vue/cli')
 
 const EOL_NODE_MAJORS = ['8.x', '9.x', '11.x', '13.x']
 for (const major of EOL_NODE_MAJORS) {
-    if (semver.satisfies(process.version, major)) {
-        console.log(
-            chalk.red(
-                `You are using Node ${process.version}.\n` +
+  if (semver.satisfies(process.version, major)) {
+    console.log(
+      chalk.red(
+        `You are using Node ${process.version}.\n` +
                     `Node.js ${major} has already reached end-of-life and will not be supported in future major releases.\n` +
                     `It's strongly recommended to use an active LTS version instead.`
-            )
-        )
-    }
+      )
+    )
+  }
 }
 
 const fs = require('fs')
@@ -46,10 +46,10 @@ const minimist = require('minimist')
 
 // enter debug mode when creating test repo
 if (
-    slash(process.cwd()).indexOf('/packages/test') > 0 &&
+  slash(process.cwd()).indexOf('/packages/test') > 0 &&
     (fs.existsSync(path.resolve(process.cwd(), '../@vue')) || fs.existsSync(path.resolve(process.cwd(), '../../@vue')))
 ) {
-    process.env.VUE_CLI_DEBUG = true
+  process.env.VUE_CLI_DEBUG = true
 }
 
 const program = require('commander')
@@ -74,18 +74,18 @@ program
     .option('-b, --bare', 'Scaffold project without beginner instructions')
     .option('--skipGetStarted', 'Skip displaying "Get started" instructions')
     .action((name, cmd) => {
-        const options = cleanArgs(cmd)
+      const options = cleanArgs(cmd)
 
-        if (minimist(process.argv.slice(3))._.length > 1) {
-            console.log(
-                chalk.yellow("\n Info: You provided more than one argument. The first one will be used as the app's name, the rest are ignored.")
-            )
-        }
-        // --git makes commander to default git to true
-        if (process.argv.includes('-g') || process.argv.includes('--git')) {
-            options.forceGit = true
-        }
-        require('../lib/create')(name, options)
+      if (minimist(process.argv.slice(3))._.length > 1) {
+        console.log(
+          chalk.yellow("\n Info: You provided more than one argument. The first one will be used as the app's name, the rest are ignored.")
+        )
+      }
+      // --git makes commander to default git to true
+      if (process.argv.includes('-g') || process.argv.includes('--git')) {
+        options.forceGit = true
+      }
+      require('../lib/create')(name, options)
     })
 
 program
@@ -94,7 +94,7 @@ program
     .option('--registry <url>', 'Use specified npm registry when installing dependencies (only for npm)')
     .allowUnknownOption()
     .action(plugin => {
-        require('../lib/add')(plugin, minimist(process.argv.slice(3)))
+      require('../lib/add')(plugin, minimist(process.argv.slice(3)))
     })
 
 program
@@ -103,7 +103,7 @@ program
     .option('--registry <url>', 'Use specified npm registry when installing dependencies (only for npm)')
     .allowUnknownOption()
     .action(plugin => {
-        require('../lib/invoke')(plugin, minimist(process.argv.slice(3)))
+      require('../lib/invoke')(plugin, minimist(process.argv.slice(3)))
     })
 
 program
@@ -116,7 +116,7 @@ program
     .option('--plugins', 'list all plugin names')
     .option('-v --verbose', 'Show full function definitions in output')
     .action((paths, cmd) => {
-        require('../lib/inspect')(paths, cleanArgs(cmd))
+      require('../lib/inspect')(paths, cleanArgs(cmd))
     })
 
 program
@@ -126,7 +126,7 @@ program
     .option('-c, --copy', 'Copy local url to clipboard')
     .option('-p, --port <port>', 'Port used by the server (default: 8080 or next available port)')
     .action((entry, cmd) => {
-        loadCommand('serve', '@vue/cli-service-global').serve(entry, cleanArgs(cmd))
+      loadCommand('serve', '@vue/cli-service-global').serve(entry, cleanArgs(cmd))
     })
 
 program
@@ -136,7 +136,7 @@ program
     .option('-n, --name <name>', 'name for lib or web-component mode (default: entry filename)')
     .option('-d, --dest <dir>', 'output directory (default: dist)')
     .action((entry, cmd) => {
-        loadCommand('build', '@vue/cli-service-global').build(entry, cleanArgs(cmd))
+      loadCommand('build', '@vue/cli-service-global').build(entry, cleanArgs(cmd))
     })
 
 program
@@ -148,8 +148,8 @@ program
     .option('--quiet', `Don't output starting messages`)
     .option('--headless', `Don't open browser on start and output port`)
     .action(cmd => {
-        checkNodeVersion('>=8.6', 'vue ui')
-        require('../lib/ui')(cleanArgs(cmd))
+      checkNodeVersion('>=8.6', 'vue ui')
+      require('../lib/ui')(cleanArgs(cmd))
     })
 
 program
@@ -158,7 +158,7 @@ program
     .option('-c, --clone', 'Use git clone when fetching remote template')
     .option('--offline', 'Use cached template')
     .action(() => {
-        loadCommand('init', '@vue/cli-init')
+      loadCommand('init', '@vue/cli-init')
     })
 
 program
@@ -170,7 +170,7 @@ program
     .option('-e, --edit', 'open config with default editor')
     .option('--json', 'outputs JSON result only')
     .action((value, cmd) => {
-        require('../lib/config')(value, cleanArgs(cmd))
+      require('../lib/config')(value, cleanArgs(cmd))
     })
 
 program
@@ -178,7 +178,7 @@ program
     .description('(experimental) check for outdated vue cli service / plugins')
     .option('--next', 'Also check for alpha / beta / rc versions when upgrading')
     .action(cmd => {
-        require('../lib/outdated')(cleanArgs(cmd))
+      require('../lib/outdated')(cleanArgs(cmd))
     })
 
 program
@@ -190,7 +190,7 @@ program
     .option('--all', 'Upgrade all plugins')
     .option('--next', 'Also check for alpha / beta / rc versions when upgrading')
     .action((packageName, cmd) => {
-        require('../lib/upgrade')(packageName, cleanArgs(cmd))
+      require('../lib/upgrade')(packageName, cleanArgs(cmd))
     })
 
 program
@@ -199,45 +199,45 @@ program
     // TODO: use `requiredOption` after upgrading to commander 4.x
     .option('-f, --from <version>', 'The base version for the migrator to migrate from')
     .action((packageName, cmd) => {
-        require('../lib/migrate')(packageName, cleanArgs(cmd))
+      require('../lib/migrate')(packageName, cleanArgs(cmd))
     })
 
 program
     .command('info')
     .description('print debugging information about your environment')
     .action(cmd => {
-        console.log(chalk.bold('\nEnvironment Info:'))
-        require('envinfo')
+      console.log(chalk.bold('\nEnvironment Info:'))
+      require('envinfo')
             .run(
-                {
-                    System: ['OS', 'CPU'],
-                    Binaries: ['Node', 'Yarn', 'npm'],
-                    Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
-                    npmPackages: '/**/{typescript,*vue*,@vue/*/}',
-                    npmGlobalPackages: ['@vue/cli'],
-                },
-                {
-                    showNotFound: true,
-                    duplicates: true,
-                    fullTree: true,
-                }
+              {
+                System: ['OS', 'CPU'],
+                Binaries: ['Node', 'Yarn', 'npm'],
+                Browsers: ['Chrome', 'Edge', 'Firefox', 'Safari'],
+                npmPackages: '/**/{typescript,*vue*,@vue/*/}',
+                npmGlobalPackages: ['@vue/cli']
+              },
+              {
+                showNotFound: true,
+                duplicates: true,
+                fullTree: true
+              }
             )
             .then(console.log)
     })
 
 // output help information on unknown commands
 program.arguments('<command>').action(cmd => {
-    program.outputHelp()
-    console.log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`))
-    console.log()
-    suggestCommands(cmd)
+  program.outputHelp()
+  console.log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`))
+  console.log()
+  suggestCommands(cmd)
 })
 
 // add some useful info on help
 program.on('--help', () => {
-    console.log()
-    console.log(`  Run ${chalk.cyan(`vue <command> --help`)} for detailed usage of given command.`)
-    console.log()
+  console.log()
+  console.log(`  Run ${chalk.cyan(`vue <command> --help`)} for detailed usage of given command.`)
+  console.log()
 })
 
 program.commands.forEach(c => c.on('--help', () => console.log()))
@@ -246,55 +246,55 @@ program.commands.forEach(c => c.on('--help', () => console.log()))
 const enhanceErrorMessages = require('../lib/util/enhanceErrorMessages')
 
 enhanceErrorMessages('missingArgument', argName => {
-    return `Missing required argument ${chalk.yellow(`<${argName}>`)}.`
+  return `Missing required argument ${chalk.yellow(`<${argName}>`)}.`
 })
 
 enhanceErrorMessages('unknownOption', optionName => {
-    return `Unknown option ${chalk.yellow(optionName)}.`
+  return `Unknown option ${chalk.yellow(optionName)}.`
 })
 
 enhanceErrorMessages('optionMissingArgument', (option, flag) => {
-    return `Missing required argument for option ${chalk.yellow(option.flags)}` + (flag ? `, got ${chalk.yellow(flag)}` : ``)
+  return `Missing required argument for option ${chalk.yellow(option.flags)}` + (flag ? `, got ${chalk.yellow(flag)}` : ``)
 })
 
 program.parse(process.argv)
 
 if (!process.argv.slice(2).length) {
-    program.outputHelp()
+  program.outputHelp()
 }
 
-function suggestCommands(unknownCommand) {
-    const availableCommands = program.commands.map(cmd => cmd._name)
+function suggestCommands (unknownCommand) {
+  const availableCommands = program.commands.map(cmd => cmd._name)
 
-    let suggestion
+  let suggestion
 
-    availableCommands.forEach(cmd => {
-        const isBestMatch = leven(cmd, unknownCommand) < leven(suggestion || '', unknownCommand)
-        if (leven(cmd, unknownCommand) < 3 && isBestMatch) {
-            suggestion = cmd
-        }
-    })
-
-    if (suggestion) {
-        console.log(`  ` + chalk.red(`Did you mean ${chalk.yellow(suggestion)}?`))
+  availableCommands.forEach(cmd => {
+    const isBestMatch = leven(cmd, unknownCommand) < leven(suggestion || '', unknownCommand)
+    if (leven(cmd, unknownCommand) < 3 && isBestMatch) {
+      suggestion = cmd
     }
+  })
+
+  if (suggestion) {
+    console.log(`  ` + chalk.red(`Did you mean ${chalk.yellow(suggestion)}?`))
+  }
 }
 
-function camelize(str) {
-    return str.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''))
+function camelize (str) {
+  return str.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''))
 }
 
 // commander passes the Command object itself as options,
 // extract only actual options into a fresh object.
-function cleanArgs(cmd) {
-    const args = {}
-    cmd.options.forEach(o => {
-        const key = camelize(o.long.replace(/^--/, ''))
-        // if an option is not present and Command has a method with the same name
-        // it should not be copied
-        if (typeof cmd[key] !== 'function' && typeof cmd[key] !== 'undefined') {
-            args[key] = cmd[key]
-        }
-    })
-    return args
+function cleanArgs (cmd) {
+  const args = {}
+  cmd.options.forEach(o => {
+    const key = camelize(o.long.replace(/^--/, ''))
+    // if an option is not present and Command has a method with the same name
+    // it should not be copied
+    if (typeof cmd[key] !== 'function' && typeof cmd[key] !== 'undefined') {
+      args[key] = cmd[key]
+    }
+  })
+  return args
 }
