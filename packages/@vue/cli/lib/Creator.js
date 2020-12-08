@@ -73,6 +73,8 @@ module.exports = class Creator extends EventEmitter {
     const isTestOrDebug = process.env.VUE_CLI_TEST || process.env.VUE_CLI_DEBUG
     const { run, name, context, afterInvokeCbs, afterAnyInvokeCbs } = this
 
+    console.log(cliOptions)
+    console.log(preset)
     if (!preset) {
       if (cliOptions.preset) {
         // vue create foo --preset bar
@@ -91,6 +93,8 @@ module.exports = class Creator extends EventEmitter {
       } else {
         // ↑↑↑↑ 获取用户最终选择的内容
         preset = await this.promptAndResolvePreset()
+        console.log('preset')
+        console.log(preset)
       }
     }
 
@@ -153,6 +157,9 @@ module.exports = class Creator extends EventEmitter {
       devDependencies: {},
       ...resolvePkg(context)
     }
+    // console.log('context')
+    // console.log(context)
+    // 生成package.json
     const deps = Object.keys(preset.plugins)
     deps.forEach(dep => {
       if (preset.plugins[dep]._isPreset) {
@@ -172,7 +179,7 @@ module.exports = class Creator extends EventEmitter {
       pkg.devDependencies[dep] = version
     })
 
-    // write package.json
+    // 在当前上下文位置生成package
     await writeFileTree(context, {
       'package.json': JSON.stringify(pkg, null, 2)
     })
