@@ -6,6 +6,7 @@
     "packages/vue-cli-version-marker"
   ],
   "scripts": {
+    "testCli": "node ./packages/@vue/cli/bin/vue.js create vue-test-cli",
     "test": "node scripts/test.js",
     "pretest": "yarn clean",
     "lint": "eslint --fix packages/**/*.js packages/**/bin/*",
