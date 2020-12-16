@@ -85,11 +85,11 @@ exports.executeCommand = function executeCommand (command, args, cwd) {
     // '--save-dev' ]
     log(`⚙\u{fe0f}  cwd`)
     log(cwd)
-    
+
     const child = execa(command, args, { cwd, stdio: ['inherit', apiMode ? 'pipe' : 'inherit', !apiMode && command === 'yarn' ? 'pipe' : 'inherit'] })
     log(`⚙\u{fe0f}  install executeCommand 2`)
     if (apiMode) {
-    log(`⚙\u{fe0f}  install executeCommand 2.1`)
+      log(`⚙\u{fe0f}  install executeCommand 2.1`)
       let progressTotal = 0
       let progressTime = Date.now()
       child.stdout.on('data', buffer => {
@@ -120,13 +120,12 @@ exports.executeCommand = function executeCommand (command, args, cwd) {
             console.log(str)
           }
         } else {
-    log(`⚙\u{fe0f}  install executeCommand 3`)
+          log(`⚙\u{fe0f}  install executeCommand 3`)
           process.stdout.write(buffer)
         }
       })
     } else {
-    log(`⚙\u{fe0f}  install executeCommand 2.2`)
-    log(`⚙\u{fe0f}  install executeCommand 2.3 ${command}`)
+      log(`⚙\u{fe0f}  install executeCommand 2.2`)
       // filter out unwanted yarn output
       if (command === 'yarn') {
         child.stderr.on('data', buf => {
@@ -148,13 +147,13 @@ exports.executeCommand = function executeCommand (command, args, cwd) {
         })
       }
     }
-
+    log(`⚙\u{fe0f}  install executeCommand 2.3 ${command}`)
     child.on('close', code => {
       if (code !== 0) {
         reject(`command failed: ${command} ${args.join(' ')}`)
         return
       }
-        log(`⚙\u{fe0f}  install executeCommand 4`)
+      log(`⚙\u{fe0f}  install executeCommand 4`)
       resolve()
     })
   })

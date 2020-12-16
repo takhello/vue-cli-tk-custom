@@ -331,10 +331,8 @@ class PackageManager {
   // 执行命令
 
   async runCommand (command, args) {
-    log(`⚙\u{fe0f}  install runCommand`)
-      
     await this.setRegistryEnvs()
-    
+
     log(`⚙\u{fe0f}  install runCommand：开始执行安装命令 1`)
 
     // 执行
@@ -350,7 +348,6 @@ class PackageManager {
 
   // 下载依赖
   async install () {
-
     log(`⚙\u{fe0f}  install`)
 
     if (process.env.VUE_CLI_TEST) {
@@ -365,26 +362,26 @@ class PackageManager {
     }
 
     if (this.needsNpmInstallFix) {
-        log(`⚙\u{fe0f}  install 1`)
+      log(`⚙\u{fe0f}  install 1`)
       // if npm 5, split into several `npm add` calls
       // see https://github.com/vuejs/vue-cli/issues/5800#issuecomment-675199729
       const pkg = resolvePkg(this.context)
       log(`⚙\u{fe0f}  install 1.1`)
 
       if (pkg.dependencies) {
-      log(`⚙\u{fe0f}  install 1.2`)
+        log(`⚙\u{fe0f}  install 1.2`)
         const deps = Object.entries(pkg.dependencies).map(([dep, range]) => `${dep}@${range}`)
         await this.runCommand('install', deps)
       }
-
+      // 默认启动走这里
       if (pkg.devDependencies) {
-      log(`⚙\u{fe0f}  install 1.3`)
+        log(`⚙\u{fe0f}  install 1.3`)
         const devDeps = Object.entries(pkg.devDependencies).map(([dep, range]) => `${dep}@${range}`)
         await this.runCommand('install', [...devDeps, '--save-dev'])
       }
 
       if (pkg.optionalDependencies) {
-      log(`⚙\u{fe0f}  install 1.4`)
+        log(`⚙\u{fe0f}  install 1.4`)
         const devDeps = Object.entries(pkg.devDependencies).map(([dep, range]) => `${dep}@${range}`)
         await this.runCommand('install', [...devDeps, '--save-optional'])
       }

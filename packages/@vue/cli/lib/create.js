@@ -69,6 +69,7 @@ async function create (projectName, options) {
   }
 
   const creator = new Creator(name, targetDir, getPromptModules())
+  // 创建项目主流程
   await creator.create(options)
 }
 

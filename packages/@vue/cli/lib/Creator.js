@@ -69,6 +69,7 @@ module.exports = class Creator extends EventEmitter {
     promptModules.forEach(m => m(promptAPI))
   }
 
+  // 创建项目主函数
   async create (cliOptions = {}, preset = null) {
     const isTestOrDebug = process.env.VUE_CLI_TEST || process.env.VUE_CLI_DEBUG
     const { run, name, context, afterInvokeCbs, afterAnyInvokeCbs } = this
@@ -129,12 +130,12 @@ module.exports = class Creator extends EventEmitter {
       preset.plugins['@vue/cli-plugin-vuex'] = {}
     }
 
-    const packageManager = ( cliOptions.packageManager || loadOptions().packageManager || (hasYarn() ? 'yarn' : null) || (hasPnpm3OrLater() ? 'pnpm' : 'npm'))
+    const packageManager = (cliOptions.packageManager || loadOptions().packageManager || (hasYarn() ? 'yarn' : null) || (hasPnpm3OrLater() ? 'pnpm' : 'npm'))
 
     await clearConsole()
     const pm = new PackageManager({ context, forcePackageManager: packageManager })
 
-    log(`✨  Creating project in ${chalk.yellow(context)}.`)
+    log(`✨ 创建项目 Creating project in ${chalk.yellow(context)}.`)
     this.emit('creation', { event: 'creating' })
 
     // get latest CLI plugin version
@@ -196,13 +197,13 @@ module.exports = class Creator extends EventEmitter {
     // so that vue-cli-service can setup git hooks.
     const shouldInitGit = this.shouldInitGit(cliOptions)
     if (shouldInitGit) {
-      log(`🗃  Initializing git repository...`)
+      log(`🗃  初始化git存储库 Initializing git repository...`)
       this.emit('creation', { event: 'git-init' })
       await run('git init')
     }
 
     // install plugins
-    log(`⚙\u{fe0f}  Installing CLI plugins. This might take a while111222333...`)
+    log(`⚙\u{fe0f}CLI安装插件。这可能需要一段时间  Installing CLI plugins. This might take a while 111222333...`)
     log()
     // 安装依赖
     this.emit('creation', { event: 'plugins-install' })
@@ -212,18 +213,15 @@ module.exports = class Creator extends EventEmitter {
       log(`⚙\u{fe0f}  1`)
       await require('./util/setupDevProject')(context)
       log(`⚙\u{fe0f}  2`)
-
     } else {
       log(`⚙\u{fe0f}  3`)
       await pm.install()
       log(`⚙\u{fe0f}  4`)
-
     }
-    log(`⚙\u{fe0f}  5`)
-
+    log(`⚙\u{fe0f}  第一步安装完成`)
 
     // run generator
-    log(`🚀  Invoking generators...`)
+    log(`🚀  调用生成器 Invoking generators...`)
     this.emit('creation', { event: 'invoking-generators' })
     const plugins = await this.resolvePlugins(preset.plugins, pkg)
     const generator = new Generator(context, {
@@ -237,15 +235,14 @@ module.exports = class Creator extends EventEmitter {
     })
 
     // install additional deps (injected by generators)
-    log(`📦  Installing additional dependencies...`)
+    log(`📦  安装额外的依赖关系 Installing additional dependencies...`)
     this.emit('creation', { event: 'deps-install' })
-    log()
     if (!isTestOrDebug || process.env.VUE_CLI_TEST_DO_INSTALL_PLUGIN) {
       await pm.install()
     }
 
     // run complete cbs if any (injected by generators)
-    log(`⚓  Running completion hooks...`)
+    log(`⚓ 钩子执行完成 Running completion hooks...`)
     this.emit('creation', { event: 'completion-hooks' })
     for (const cb of afterInvokeCbs) {
       await cb()
@@ -257,7 +254,7 @@ module.exports = class Creator extends EventEmitter {
     if (!generator.files['README.md']) {
       // generate README.md
       log()
-      log('📄  Generating README.md...')
+      log('📄 生成 README.md Generating README.md...')
       await writeFileTree(context, {
         'README.md': generateReadme(generator.pkg, packageManager)
       })
@@ -281,16 +278,14 @@ module.exports = class Creator extends EventEmitter {
     }
 
     // log instructions
-    log()
-    log(`🎉  Successfully created project ${chalk.yellow(name)}.`)
+    log(`🎉  成功创建项目： Successfully created project ${chalk.yellow(name)}.`)
     if (!cliOptions.skipGetStarted) {
       log(
-        `👉  Get started with the following commands:\n\n` +
+        `👉  开始使用以下命令： Get started with the following commands:\n\n` +
         (this.context === process.cwd() ? `` : chalk.cyan(` ${chalk.gray('$')} cd ${name}\n`)) +
         chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
       )
     }
-    log()
     this.emit('creation', { event: 'done' })
 
     if (gitCommitFailed) {
