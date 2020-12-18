@@ -98,8 +98,10 @@ async function initCreator (context) {
   /* Event listeners */
   // Creator emits creation events (the project creation steps)
   onCreationEvent = ({ event }) => {
+    log('onCreationEvent:' + event)
     progress.set({ id: PROGRESS_ID, status: event, info: null }, context)
   }
+
   creator.on('creation', onCreationEvent)
   // Progress bar
   onInstallProgress = value => {

@@ -133,12 +133,7 @@ module.exports = class Creator extends EventEmitter {
       preset.plugins['@vue/cli-plugin-vuex'] = {}
     }
 
-    const packageManager = (
-      cliOptions.packageManager ||
-      loadOptions().packageManager ||
-      (hasYarn() ? 'yarn' : null) ||
-      (hasPnpm3OrLater() ? 'pnpm' : 'npm')
-    )
+    const packageManager = (cliOptions.packageManager || loadOptions().packageManager || (hasYarn() ? 'yarn' : null) || (hasPnpm3OrLater() ? 'pnpm' : 'npm'))
 
     await clearConsole()
     const pm = new PackageManager({ context, forcePackageManager: packageManager })
@@ -170,7 +165,7 @@ module.exports = class Creator extends EventEmitter {
 
       if (!version) {
         if (isOfficialPlugin(dep) || dep === '@vue/cli-service' || dep === '@vue/babel-preset-env') {
-          version = isTestOrDebug ? `file:${path.resolve(__dirname, '../../../', dep)}` : `~${latestMinor}`
+          version = isTestOrDebug ? `file:${path.resolve(__dirname, '@vue/', dep)}` : `~${latestMinor}`
         } else {
           version = 'latest'
         }
@@ -214,16 +209,22 @@ module.exports = class Creator extends EventEmitter {
     }
 
     // install plugins
-    log(`⚙\u{fe0f}  Installing CLI plugins. This might take a while...`)
+    log(`⚙\u{fe0f}  Installing CLI plugins. This might take a while111222333...`)
     log()
+    // 安装依赖
     this.emit('creation', { event: 'plugins-install' })
 
     if (isTestOrDebug && !process.env.VUE_CLI_TEST_DO_INSTALL_PLUGIN) {
       // in development, avoid installation process
+      log(`⚙\u{fe0f}  1`)
       await require('./util/setupDevProject')(context)
+      log(`⚙\u{fe0f}  2`)
     } else {
+      log(`⚙\u{fe0f}  3`)
       await pm.install()
+      log(`⚙\u{fe0f}  4`)
     }
+    log(`⚙\u{fe0f}  5`)
 
     // run generator
     log(`🚀  Invoking generators...`)
