@@ -23,7 +23,6 @@ module.exports = async function loadRemotePreset (repository, clone) {
   }
 
   await new Promise((resolve, reject) => {
-    log(`⚙\u{fe0f}  下载git resolve download-git-repo...`)
     download(repository, tmpdir, { clone }, err => {
       if (err) return reject(err)
       resolve()
