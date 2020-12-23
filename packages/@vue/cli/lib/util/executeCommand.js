@@ -58,7 +58,7 @@ const progress = exports.progress = new InstallProgress()
 exports.executeCommand = function executeCommand (command, args, cwd) {
   debug(`command: `, command)
   debug(`args: `, args)
-  log(`⚙\u{fe0f}  install executeCommand 1`)
+  log(`execa 执行命令 开始`)
   return new Promise((resolve, reject) => {
     const apiMode = process.env.VUE_CLI_API_MODE
 
@@ -71,25 +71,17 @@ exports.executeCommand = function executeCommand (command, args, cwd) {
         args.push('--json')
       }
     }
-    log(`⚙\u{fe0f}  command`)
+    log(`execa 命令`)
     log(command) // npm
-    log(`⚙\u{fe0f}  args`)
+    log(`execa 参数`)
     log(args)
-
-    // [ 'install',
-    // '--loglevel',
-    // 'error',
-    // '@vue/cli-plugin-babel@~4.5.0',
-    // '@vue/cli-plugin-eslint@~4.5.0',
-    // '@vue/cli-service@~4.5.0',
-    // '--save-dev' ]
-    log(`⚙\u{fe0f}  cwd`)
+    log(`execa 路径`)
     log(cwd)
 
     const child = execa(command, args, { cwd, stdio: ['inherit', apiMode ? 'pipe' : 'inherit', !apiMode && command === 'yarn' ? 'pipe' : 'inherit'] })
-    log(`⚙\u{fe0f}  install executeCommand 2`)
+    log(`execa 执行命令 2`)
     if (apiMode) {
-      log(`⚙\u{fe0f}  install executeCommand 2.1`)
+      log(`execa 执行命令 2.1`)
       let progressTotal = 0
       let progressTime = Date.now()
       child.stdout.on('data', buffer => {
@@ -120,12 +112,12 @@ exports.executeCommand = function executeCommand (command, args, cwd) {
             console.log(str)
           }
         } else {
-          log(`⚙\u{fe0f}  install executeCommand 3`)
+          log(`execa 执行命令 3`)
           process.stdout.write(buffer)
         }
       })
     } else {
-      log(`⚙\u{fe0f}  install executeCommand 2.2`)
+      log(`execa 执行命令 2.2`)
       // filter out unwanted yarn output
       if (command === 'yarn') {
         child.stderr.on('data', buf => {
@@ -147,13 +139,13 @@ exports.executeCommand = function executeCommand (command, args, cwd) {
         })
       }
     }
-    log(`⚙\u{fe0f}  install executeCommand 2.3 ${command}`)
+    log(`execa 执行命令 2.3 ${command}`)
     child.on('close', code => {
       if (code !== 0) {
         reject(`command failed: ${command} ${args.join(' ')}`)
         return
       }
-      log(`⚙\u{fe0f}  install executeCommand 4`)
+      log(`execa 执行命令 完成`)
       resolve()
     })
   })

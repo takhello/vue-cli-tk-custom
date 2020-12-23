@@ -137,7 +137,6 @@ class PackageManager {
     }
 
     if (!SUPPORTED_PACKAGE_MANAGERS.includes(this.bin)) {
-      log()
       warn(
         `The package manager ${chalk.red(this.bin)} is ${chalk.red('not officially supported')}.\n` +
         `It will be treated like ${chalk.cyan('npm')}, but compatibility issues may occur.\n` +
@@ -329,11 +328,9 @@ class PackageManager {
   }
 
   // 执行命令
-
   async runCommand (command, args) {
     await this.setRegistryEnvs()
-
-    log(`⚙\u{fe0f}  install runCommand：开始执行安装命令 1`)
+    log(`runCommand 执行安装命令 开始`)
 
     // 执行
     return await executeCommand(
@@ -348,8 +345,7 @@ class PackageManager {
 
   // 下载依赖
   async install () {
-    log(`⚙\u{fe0f}  install`)
-
+    // 再次之前已生成 package.json 文件
     if (process.env.VUE_CLI_TEST) {
       try {
         process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true
@@ -362,33 +358,33 @@ class PackageManager {
     }
 
     if (this.needsNpmInstallFix) {
-      log(`⚙\u{fe0f}  install 1`)
+      log(`install 下载依赖 开始`)
       // if npm 5, split into several `npm add` calls
       // see https://github.com/vuejs/vue-cli/issues/5800#issuecomment-675199729
       const pkg = resolvePkg(this.context)
-      log(`⚙\u{fe0f}  install 1.1`)
-
+      // 从 this.context 中获取配置
+      // 其次在走这里
       if (pkg.dependencies) {
-        log(`⚙\u{fe0f}  install 1.2`)
+        log(`install 下载依赖 1.2`)
         const deps = Object.entries(pkg.dependencies).map(([dep, range]) => `${dep}@${range}`)
         await this.runCommand('install', deps)
       }
-      // 默认启动走这里
+      // 优先走这里
       if (pkg.devDependencies) {
-        log(`⚙\u{fe0f}  install 1.3`)
+        log(`install 下载依赖 1.3`)
         const devDeps = Object.entries(pkg.devDependencies).map(([dep, range]) => `${dep}@${range}`)
         await this.runCommand('install', [...devDeps, '--save-dev'])
       }
 
       if (pkg.optionalDependencies) {
-        log(`⚙\u{fe0f}  install 1.4`)
+        log(`install 下载依赖 1.4`)
         const devDeps = Object.entries(pkg.devDependencies).map(([dep, range]) => `${dep}@${range}`)
         await this.runCommand('install', [...devDeps, '--save-optional'])
       }
-
+      log(`install 下载依赖 完成`)
       return
     }
-    log(`⚙\u{fe0f}  install 2`)
+    log(`install 下载依赖 完成`)
     return await this.runCommand('install')
   }
 

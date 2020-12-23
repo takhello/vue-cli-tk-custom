@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
+// package.json 中写入了 eslintConfig
 module.exports = (api, { config, lintOn = [] }, rootOptions, invoking) => {
   const eslintConfig = require('../eslintOptions').config(api, config, rootOptions)
   const devDependencies = require('../eslintDeps').getDeps(api, config, rootOptions)

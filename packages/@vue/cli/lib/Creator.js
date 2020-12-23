@@ -6,7 +6,7 @@ const Generator = require('./Generator')
 const cloneDeep = require('lodash.clonedeep')
 const sortObject = require('./util/sortObject')
 const getVersions = require('./util/getVersions')
-const PackageManager = require('./util/ProjectPackageManager')
+// const PackageManager = require('./util/ProjectPackageManager')
 const { clearConsole } = require('./util/clearConsole')
 const PromptModuleAPI = require('./PromptModuleAPI')
 const writeFileTree = require('./util/writeFileTree')
@@ -133,9 +133,10 @@ module.exports = class Creator extends EventEmitter {
     const packageManager = (cliOptions.packageManager || loadOptions().packageManager || (hasYarn() ? 'yarn' : null) || (hasPnpm3OrLater() ? 'pnpm' : 'npm'))
 
     await clearConsole()
-    const pm = new PackageManager({ context, forcePackageManager: packageManager })
+    // const pm = new PackageManager({ context, forcePackageManager: packageManager })
 
-    log(`✨ 创建项目 Creating project in ${chalk.yellow(context)}.`)
+    log(`create 创建项目 ${chalk.yellow(context)}.`)
+    // Users/baiwang/Documents/store/store-git/vue-cli/vue-test-cli
     this.emit('creation', { event: 'creating' })
 
     // get latest CLI plugin version
@@ -147,7 +148,7 @@ module.exports = class Creator extends EventEmitter {
       version: '0.1.0',
       private: true,
       devDependencies: {},
-      ...resolvePkg(context)
+      ...resolvePkg(context) // 解析当前当前目录配置
     }
     const deps = Object.keys(preset.plugins)
     deps.forEach(dep => {
@@ -168,11 +169,13 @@ module.exports = class Creator extends EventEmitter {
       pkg.devDependencies[dep] = version
     })
 
-    // write package.json
+    // 生成 package.json
+    log(`create 生成 package.json`)
     await writeFileTree(context, {
       'package.json': JSON.stringify(pkg, null, 2)
     })
 
+    // 生成其他
     // generate a .npmrc file for pnpm, to persist the `shamefully-flatten` flag
     if (packageManager === 'pnpm') {
       const pnpmConfig = hasPnpmVersionOrLater('4.0.0')
@@ -184,6 +187,7 @@ module.exports = class Creator extends EventEmitter {
       })
     }
 
+    // 生成其他
     if (packageManager === 'yarn' && semver.satisfies(process.version, '8.x')) {
       // Vue CLI 4.x should support Node 8.x,
       // but some dependenices already bumped `engines` field to Node 10
@@ -197,32 +201,29 @@ module.exports = class Creator extends EventEmitter {
     // so that vue-cli-service can setup git hooks.
     const shouldInitGit = this.shouldInitGit(cliOptions)
     if (shouldInitGit) {
-      log(`🗃  初始化git存储库 Initializing git repository...`)
+      log(`create 初始化git存储库...`)
       this.emit('creation', { event: 'git-init' })
       await run('git init')
     }
 
     // install plugins
-    log(`⚙\u{fe0f}CLI安装插件。这可能需要一段时间  Installing CLI plugins. This might take a while 111222333...`)
-    log()
+    log(`create CLI安装插件。这可能需要一段时间...`)
     // 安装依赖
     this.emit('creation', { event: 'plugins-install' })
 
     if (isTestOrDebug && !process.env.VUE_CLI_TEST_DO_INSTALL_PLUGIN) {
       // in development, avoid installation process
-      log(`⚙\u{fe0f}  1`)
       await require('./util/setupDevProject')(context)
-      log(`⚙\u{fe0f}  2`)
     } else {
-      log(`⚙\u{fe0f}  3`)
-      await pm.install()
-      log(`⚙\u{fe0f}  4`)
+      log(`create 开始执行安装命令`)
+      //   await pm.install()
     }
-    log(`⚙\u{fe0f}  第一步安装完成`)
-
+    log(`create 第一步安装完成`)
     // run generator
-    log(`🚀  调用生成器 Invoking generators...`)
+    log(`create 调用生成器...`)
+    // return
     this.emit('creation', { event: 'invoking-generators' })
+    // 增加相关配置 置空 devDependencies
     const plugins = await this.resolvePlugins(preset.plugins, pkg)
     const generator = new Generator(context, {
       pkg,
@@ -235,14 +236,14 @@ module.exports = class Creator extends EventEmitter {
     })
 
     // install additional deps (injected by generators)
-    log(`📦  安装额外的依赖关系 Installing additional dependencies...`)
+    log(`create 安装额外的依赖关系...`)
     this.emit('creation', { event: 'deps-install' })
     if (!isTestOrDebug || process.env.VUE_CLI_TEST_DO_INSTALL_PLUGIN) {
-      await pm.install()
+    //   await pm.install()
     }
 
     // run complete cbs if any (injected by generators)
-    log(`⚓ 钩子执行完成 Running completion hooks...`)
+    log(`create 钩子执行完成...`)
     this.emit('creation', { event: 'completion-hooks' })
     for (const cb of afterInvokeCbs) {
       await cb()
@@ -253,8 +254,7 @@ module.exports = class Creator extends EventEmitter {
 
     if (!generator.files['README.md']) {
       // generate README.md
-      log()
-      log('📄 生成 README.md Generating README.md...')
+      log('create 生成 README.md...')
       await writeFileTree(context, {
         'README.md': generateReadme(generator.pkg, packageManager)
       })
@@ -278,10 +278,10 @@ module.exports = class Creator extends EventEmitter {
     }
 
     // log instructions
-    log(`🎉  成功创建项目： Successfully created project ${chalk.yellow(name)}.`)
+    log(`create 成功创建项目：${chalk.yellow(name)}.`)
     if (!cliOptions.skipGetStarted) {
       log(
-        `👉  开始使用以下命令： Get started with the following commands:\n\n` +
+        `create 开始使用以下命令: \n\n` +
         (this.context === process.cwd() ? `` : chalk.cyan(` ${chalk.gray('$')} cd ${name}\n`)) +
         chalk.cyan(` ${chalk.gray('$')} ${packageManager === 'yarn' ? 'yarn serve' : packageManager === 'pnpm' ? 'pnpm run serve' : 'npm run serve'}`)
       )
@@ -338,7 +338,6 @@ module.exports = class Creator extends EventEmitter {
 
     // save preset
     if (answers.save && answers.saveName && savePreset(answers.saveName, preset)) {
-      log()
       log(`🎉  Preset ${chalk.yellow(answers.saveName)} saved in ${chalk.yellow(rcPath)}`)
     }
 
@@ -371,7 +370,6 @@ module.exports = class Creator extends EventEmitter {
       error(`preset "${name}" not found.`)
       const presets = Object.keys(savedPresets)
       if (presets.length) {
-        log()
         log(`available presets:\n${presets.join(`\n`)}`)
       } else {
         log(`you don't seem to have any saved preset.`)
@@ -383,7 +381,10 @@ module.exports = class Creator extends EventEmitter {
   }
 
   // { id: options } => [{ id, apply, options }]
+  // rawPlugins 参数类型输出
   async resolvePlugins (rawPlugins, pkg) {
+    console.log('rawPlugins')
+    console.log(rawPlugins)
     // ensure cli-service is invoked first
     rawPlugins = sortObject(rawPlugins, ['@vue/cli-service'], true)
     const plugins = []

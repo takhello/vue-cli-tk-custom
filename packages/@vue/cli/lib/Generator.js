@@ -161,14 +161,13 @@ module.exports = class Generator {
     }
   }
 
-  async generate ({
-    extractConfigFiles = false,
-    checkExisting = false
-  } = {}) {
+  async generate ({ extractConfigFiles = false, checkExisting = false } = {}) {
     await this.initPlugins()
 
     // save the file system before applying plugin for comparison
     const initialFiles = Object.assign({}, this.files)
+    console.log('---------initialFiles----------')
+    console.log(JSON.stringify(initialFiles))
     // extract configs from package.json into dedicated files.
     this.extractConfigFiles(extractConfigFiles, checkExisting)
     // wait for file resolve
@@ -180,6 +179,7 @@ module.exports = class Generator {
     await writeFileTree(this.context, this.files, initialFiles)
   }
 
+  // 提取配置文件
   extractConfigFiles (extractAll, checkExisting) {
     const configTransforms = Object.assign({},
       defaultConfigTransforms,
