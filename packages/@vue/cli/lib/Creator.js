@@ -6,7 +6,7 @@ const Generator = require('./Generator')
 const cloneDeep = require('lodash.clonedeep')
 const sortObject = require('./util/sortObject')
 const getVersions = require('./util/getVersions')
-// const PackageManager = require('./util/ProjectPackageManager')
+const PackageManager = require('./util/ProjectPackageManager')
 const { clearConsole } = require('./util/clearConsole')
 const PromptModuleAPI = require('./PromptModuleAPI')
 const writeFileTree = require('./util/writeFileTree')
@@ -137,7 +137,7 @@ module.exports = class Creator extends EventEmitter {
     const packageManager = (cliOptions.packageManager || loadOptions().packageManager || (hasYarn() ? 'yarn' : null) || (hasPnpm3OrLater() ? 'pnpm' : 'npm'))
 
     await clearConsole()
-    // const pm = new PackageManager({ context, forcePackageManager: packageManager })
+    const pm = new PackageManager({ context, forcePackageManager: packageManager })
 
     log(`create 创建项目 ${chalk.yellow(context)}.`)
     // Users/baiwang/Documents/store/store-git/vue-cli/vue-test-cli
@@ -223,7 +223,7 @@ module.exports = class Creator extends EventEmitter {
       await require('./util/setupDevProject')(context)
     } else {
       log(`create 开始执行安装命令`)
-      //   await pm.install()
+      await pm.install()
     }
     log(`create 第一步安装完成`)
     // run generator
@@ -231,13 +231,16 @@ module.exports = class Creator extends EventEmitter {
     // return
     this.emit('creation', { event: 'invoking-generators' })
     // 增加相关配置 置空 devDependencies
+    // this.resolvePlugins 增加了其它扩展配置
     const plugins = await this.resolvePlugins(preset.plugins, pkg)
+    // 调用生成器 生成插件相关的扩展
     const generator = new Generator(context, {
       pkg,
       plugins,
       afterInvokeCbs,
       afterAnyInvokeCbs
     })
+    // 调用插件生成
     await generator.generate({
       extractConfigFiles: preset.useConfigFiles
     })
@@ -246,7 +249,7 @@ module.exports = class Creator extends EventEmitter {
     log(`create 安装额外的依赖关系...`)
     this.emit('creation', { event: 'deps-install' })
     if (!isTestOrDebug || process.env.VUE_CLI_TEST_DO_INSTALL_PLUGIN) {
-    //   await pm.install()
+      await pm.install()
     }
 
     // run complete cbs if any (injected by generators)

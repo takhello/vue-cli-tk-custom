@@ -266,6 +266,7 @@ class GeneratorAPI {
   }
 
   /**
+   * 将 渲染模板 生成文件方法 保存进执行数组，功后续调用
    * Render template files into the virtual files tree object.
    *
    * @param {string | object | FileMiddleware} source -

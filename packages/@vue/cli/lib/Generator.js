@@ -162,6 +162,7 @@ module.exports = class Generator {
   }
 
   async generate ({ extractConfigFiles = false, checkExisting = false } = {}) {
+    // 插件Plugins 对应配置安装
     await this.initPlugins()
 
     // save the file system before applying plugin for comparison
@@ -264,6 +265,7 @@ module.exports = class Generator {
 
   async resolveFiles () {
     const files = this.files
+    // 循环执行每一个中间件
     for (const middleware of this.fileMiddlewares) {
       await middleware(files, ejs.render)
     }

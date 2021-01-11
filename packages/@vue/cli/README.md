@@ -9,7 +9,7 @@ vue create my-project
 
 # 在文件 packages/@vue/cli-plugin-eslint/generator/index.js中 对  package.json 进行写入eslint配置相关的操作，字段eslintConfig
 # 文件 packages/@vue/cli/lib/Generator.js 负责生成各种默认配置文件
-# 在 packages/@vue/cli/lib/Generator.js 的170行调用了 生成器，生成对应启动方法
+# 在 packages/@vue/cli/lib/Generator.js 的392行调用了 生成器，生成对应启动方法
     ```js
         // rawPlugins
         { '@vue/cli-plugin-babel': {},
